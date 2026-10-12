@@ -1,130 +1,619 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="h-full">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>星空のメッセージ</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: linear-gradient(160deg, #0b0b2b 0%, #1a1a4e 40%, #2a1a5e 100%);
-      color: #e8e8ff;
-      font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      overflow: hidden;
-      position: relative;
-    }
-    /* 星の背景 */
-    .stars {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none;
-      background-image: 
-        radial-gradient(2px 2px at 20px 30px, #fff, transparent),
-        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
-        radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-        radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.6), transparent),
-        radial-gradient(1px 1px at 160px 120px, #fff, transparent);
-      background-size: 200px 200px;
-      animation: twinkle 4s ease-in-out infinite alternate;
-    }
-    @keyframes twinkle {
-      from { opacity: 0.6; }
-      to { opacity: 1; }
-    }
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 30px;
-      letter-spacing: 0.05em;
-      text-shadow: 0 0 20px rgba(150, 180, 255, 0.6);
-      z-index: 1;
-    }
-    .card {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 24px;
-      padding: 40px 30px;
-      max-width: 420px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-      z-index: 1;
-    }
-    .message {
-      font-size: 1.25rem;
-      line-height: 1.7;
-      min-height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 30px;
-      transition: opacity 0.3s ease;
-    }
-    button {
-      background: linear-gradient(135deg, #6b8cff, #9b6bff);
-      border: none;
-      color: white;
-      font-size: 1.1rem;
-      font-weight: 600;
-      padding: 14px 36px;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(107, 140, 255, 0.4);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(107, 140, 255, 0.5);
-    }
-    button:active {
-      transform: translateY(0);
-    }
-    .footer {
-      margin-top: 40px;
-      font-size: 0.85rem;
-      opacity: 0.6;
-      z-index: 1;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusCraft - Pomodoro & Task Manager</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts & Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            work: '#F43F5E',
+                            shortBreak: '#10B981',
+                            longBreak: '#3B82F6',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .dark .glass {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s ease-in-out, stroke 0.5s ease-in-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
 </head>
-<body>
-  <div class="stars"></div>
-  <h1>🌌 星空のメッセージ</h1>
-  <div class="card">
-    <div class="message" id="msg">ボタンを押して、<br>宇宙からのメッセージを受け取ろう</div>
-    <button onclick="getMessage()">メッセージを受け取る</button>
-  </div>
-  <div class="footer">Grokが作った小さな宇宙アプリ</div>
+<body class="h-full bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300">
 
-  <script>
-    const messages = [
-      "あなたは星々のように、すでに十分輝いている。",
-      "宇宙は広大だ。あなたの可能性も、同じくらい無限だ。",
-      "今夜の空を見上げて。そこに、あなたの未来が少し映っている。",
-      "たとえ小さくても、あなたの一歩は新しい星を生む。",
-      "暗闇の中にこそ、一番きれいな光が見える。",
-      "宇宙は急がない。あなたも、自分のペースでいい。",
-      "今日という日は、136億年の歴史があなたに贈った贈り物だ。",
-      "星は遠くに見えるけど、実はいつもあなたの心の中にある。",
-      "失敗はただのブラックホール。向こう側には必ず光がある。",
-      "あなたが息をするたびに、宇宙も少しだけ微笑む。"
-    ];
+    <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div id="bg-glow-1" class="absolute -top-40 -left-40 w-96 h-96 bg-rose-400/20 dark:bg-rose-600/15 rounded-full blur-3xl transition-all duration-700"></div>
+        <div id="bg-glow-2" class="absolute top-1/2 -right-40 w-96 h-96 bg-blue-400/20 dark:bg-blue-600/15 rounded-full blur-3xl transition-all duration-700"></div>
+    </div>
 
-    function getMessage() {
-      const el = document.getElementById('msg');
-      el.style.opacity = 0;
-      setTimeout(() => {
-        const random = messages[Math.floor(Math.random() * messages.length)];
-        el.innerHTML = random;
-        el.style.opacity = 1;
-      }, 250);
-    }
-  </script>
+    <div class="min-h-full flex flex-col justify-between max-w-5xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        
+        <header class="flex items-center justify-between py-4 border-b border-slate-200/60 dark:border-slate-800/60">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-500 to-orange-500 flex items-center justify-center text-white shadow-lg shadow-rose-500/20">
+                    <i data-lucide="timer" class="w-5 h-5"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 bg-clip-text text-transparent">FocusCraft</h1>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button id="theme-toggle" class="p-2.5 rounded-xl glass hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all text-slate-600 dark:text-slate-300">
+                    <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                </button>
+                <button id="settings-btn" class="p-2.5 rounded-xl glass hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all text-slate-600 dark:text-slate-300">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="my-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <section class="lg:col-span-7 flex flex-col items-center">
+                <div class="w-full glass rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 dark:shadow-none flex flex-col items-center">
+                    
+                    <!-- Mode Switcher -->
+                    <div class="flex p-1.5 bg-slate-200/60 dark:bg-slate-800/60 rounded-2xl mb-8 w-full max-w-sm justify-between gap-1">
+                        <button id="mode-work" class="mode-btn flex-1 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-200 bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white" onclick="switchMode('work')">
+                            作業
+                        </button>
+                        <button id="mode-shortBreak" class="mode-btn flex-1 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" onclick="switchMode('shortBreak')">
+                            短休憩
+                        </button>
+                        <button id="mode-longBreak" class="mode-btn flex-1 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" onclick="switchMode('longBreak')">
+                            長休憩
+                        </button>
+                    </div>
+
+                    <!-- Circular Progress Ring & Display -->
+                    <div class="relative w-64 h-64 sm:w-72 sm:h-72 my-2 flex items-center justify-center">
+                        <svg class="w-full h-full transform" viewBox="0 0 200 200">
+                            <!-- Background ring -->
+                            <circle class="text-slate-200 dark:text-slate-800/80" stroke-width="10" stroke="currentColor" fill="transparent" r="85" cx="100" cy="100" />
+                            <!-- Dynamic progress ring -->
+                            <circle id="progress-ring" class="progress-ring-circle text-rose-500" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="85" cx="100" cy="100" stroke-dasharray="534.07" stroke-dashoffset="0" />
+                        </svg>
+
+                        <div class="absolute flex flex-col items-center justify-center text-center">
+                            <span id="timer-display" class="text-5xl sm:text-6xl font-bold tracking-tight text-slate-900 dark:text-white font-mono">25:00</span>
+                            <span id="timer-label" class="mt-2 text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">Focus Session</span>
+                        </div>
+                    </div>
+
+                    <!-- Timer Control Buttons -->
+                    <div class="flex items-center gap-4 mt-8">
+                        <button id="reset-btn" class="p-4 rounded-2xl glass hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-all duration-200 active:scale-95 shadow-sm">
+                            <i data-lucide="rotate-ccw" class="w-6 h-6"></i>
+                        </button>
+                        
+                        <button id="start-btn" class="px-8 py-4 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-semibold text-lg flex items-center gap-3 transition-all duration-200 shadow-lg shadow-rose-500/25 active:scale-95">
+                            <i data-lucide="play" id="start-icon" class="w-6 h-6 fill-current"></i>
+                            <span id="start-text">スタート</span>
+                        </button>
+
+                        <button id="skip-btn" class="p-4 rounded-2xl glass hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-all duration-200 active:scale-95 shadow-sm">
+                            <i data-lucide="skip-forward" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="lg:col-span-5 flex flex-col gap-6">
+                
+                <!-- Daily Stats Widget -->
+                <div class="glass rounded-3xl p-5 shadow-xl shadow-slate-200/50 dark:shadow-none flex items-center justify-around">
+                    <div class="text-center">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">今日の集中時間</p>
+                        <p id="stat-focus-time" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">0 <span class="text-xs font-normal">分</span></p>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
+                    <div class="text-center">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">完了ポモドーロ</p>
+                        <p id="stat-completed-pomo" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">0</p>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
+                    <div class="text-center">
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">完了タスク</p>
+                        <p id="stat-completed-tasks" class="text-2xl font-bold text-slate-900 dark:text-white mt-1">0</p>
+                    </div>
+                </div>
+
+                <!-- Task List Card -->
+                <div class="glass rounded-3xl p-6 shadow-xl shadow-slate-200/50 dark:shadow-none flex flex-col h-[400px]">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <i data-lucide="check-square" class="w-5 h-5 text-rose-500"></i> タスク管理
+                        </h2>
+                        <span id="task-counter" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">0/0 完了</span>
+                    </div>
+
+                    <!-- Input form -->
+                    <form id="task-form" class="flex gap-2 mb-4">
+                        <input type="text" id="task-input" placeholder="新しいタスクを追加..." required class="flex-1 px-4 py-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm text-slate-900 dark:text-white placeholder-slate-400">
+                        <input type="number" id="task-est" min="1" max="10" value="1" class="w-16 px-2 py-2.5 rounded-xl bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm text-center text-slate-900 dark:text-white" title="予定ポモドーロ数">
+                        <button type="submit" class="p-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white transition-colors">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                        </button>
+                    </form>
+
+                    <!-- Scrollable Task List -->
+                    <div id="task-list" class="flex-1 overflow-y-auto space-y-2 pr-1">
+                        <!-- Tasks will be dynamically rendered here -->
+                    </div>
+                </div>
+
+            </section>
+        </main>
+
+        <footer class="py-4 text-center text-xs text-slate-400 dark:text-slate-600">
+            FocusCraft &copy; Modern Pomodoro & Task Experience
+        </footer>
+    </div>
+
+    <div id="settings-modal" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="glass w-full max-w-md mx-4 rounded-3xl p-6 shadow-2xl transform scale-95 transition-transform duration-200 bg-white dark:bg-slate-900" id="settings-content">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">タイマー設定 (分)</h3>
+                <button id="close-settings" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">作業時間</label>
+                    <input type="number" id="setting-work" min="1" max="90" class="w-full px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-slate-900 dark:text-white focus:ring-2 focus:ring-rose-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">短休憩</label>
+                    <input type="number" id="setting-short" min="1" max="30" class="w-full px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-slate-900 dark:text-white focus:ring-2 focus:ring-rose-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">長休憩</label>
+                    <input type="number" id="setting-long" min="1" max="60" class="w-full px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-slate-900 dark:text-white focus:ring-2 focus:ring-rose-500">
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button id="save-settings" class="px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-medium rounded-xl text-sm transition-colors shadow-md shadow-rose-500/20">
+                    保存する
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State Management
+        const state = {
+            mode: 'work', // 'work', 'shortBreak', 'longBreak'
+            status: 'stopped', // 'running', 'paused', 'stopped'
+            timeLeft: 25 * 60,
+            durations: {
+                work: 25 * 60,
+                shortBreak: 5 * 60,
+                longBreak: 15 * 60
+            },
+            stats: {
+                completedPomos: 0,
+                focusMinutes: 0,
+                completedTasks: 0
+            },
+            activeTaskId: null,
+            tasks: []
+        };
+
+        // DOM Elements
+        const timerDisplay = document.getElementById('timer-display');
+        const timerLabel = document.getElementById('timer-label');
+        const progressRing = document.getElementById('progress-ring');
+        const startBtn = document.getElementById('start-btn');
+        const startIcon = document.getElementById('start-icon');
+        const startText = document.getElementById('start-text');
+        const resetBtn = document.getElementById('reset-btn');
+        const skipBtn = document.getElementById('skip-btn');
+        const taskForm = document.getElementById('task-form');
+        const taskInput = document.getElementById('task-input');
+        const taskEst = document.getElementById('task-est');
+        const taskList = document.getElementById('task-list');
+
+        let timerInterval = null;
+        const CIRCUMFERENCE = 2 * Math.PI * 85; // 534.07
+
+        // Web Audio API for sound notifications
+        function playChime() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioContext();
+                
+                const playTone = (freq, start, duration) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime + start);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + start + duration);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + start);
+                    osc.stop(ctx.currentTime + start + duration);
+                };
+
+                // Play soft double chime
+                playTone(523.25, 0, 0.6); // C5
+                playTone(659.25, 0.15, 0.8); // E5
+            } catch (e) {
+                console.log('Audio playback prevented');
+            }
+        }
+
+        // Initialize App
+        function init() {
+            lucide.createIcons();
+            loadLocalStorage();
+            updateTimerDisplay();
+            renderTasks();
+            updateStatsUI();
+            setupEventListeners();
+        }
+
+        // Event Listeners Setup
+        function setupEventListeners() {
+            startBtn.addEventListener('click', toggleTimer);
+            resetBtn.addEventListener('click', resetTimer);
+            skipBtn.addEventListener('click', skipSession);
+
+            taskForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                addTask(taskInput.value.trim(), parseInt(taskEst.value) || 1);
+                taskInput.value = '';
+            });
+
+            // Theme Toggle
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+            });
+
+            // Settings Modal Logic
+            const modal = document.getElementById('settings-modal');
+            const modalContent = document.getElementById('settings-content');
+
+            document.getElementById('settings-btn').addEventListener('click', () => {
+                document.getElementById('setting-work').value = state.durations.work / 60;
+                document.getElementById('setting-short').value = state.durations.shortBreak / 60;
+                document.getElementById('setting-long').value = state.durations.longBreak / 60;
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-95');
+            });
+
+            const closeModal = () => {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modalContent.classList.add('scale-95');
+            };
+
+            document.getElementById('close-settings').addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+            document.getElementById('save-settings').addEventListener('click', () => {
+                const work = parseInt(document.getElementById('setting-work').value) || 25;
+                const short = parseInt(document.getElementById('setting-short').value) || 5;
+                const long = parseInt(document.getElementById('setting-long').value) || 15;
+
+                state.durations.work = work * 60;
+                state.durations.shortBreak = short * 60;
+                state.durations.longBreak = long * 60;
+
+                state.timeLeft = state.durations[state.mode];
+                resetTimer();
+                closeModal();
+                saveLocalStorage();
+            });
+        }
+
+        // Mode Switching
+        function switchMode(newMode) {
+            if (state.mode === newMode && state.status !== 'stopped') return;
+            
+            clearInterval(timerInterval);
+            state.status = 'stopped';
+            state.mode = newMode;
+            state.timeLeft = state.durations[newMode];
+
+            // Update Mode Selector UI
+            const modeBtns = {
+                work: document.getElementById('mode-work'),
+                shortBreak: document.getElementById('mode-shortBreak'),
+                longBreak: document.getElementById('mode-longBreak')
+            };
+
+            const colors = {
+                work: { stroke: 'text-rose-500', btn: 'bg-rose-500', glow: 'bg-rose-400/20' },
+                shortBreak: { stroke: 'text-emerald-500', btn: 'bg-emerald-500', glow: 'bg-emerald-400/20' },
+                longBreak: { stroke: 'text-blue-500', btn: 'bg-blue-500', glow: 'bg-blue-400/20' }
+            };
+
+            Object.keys(modeBtns).forEach(m => {
+                const btn = modeBtns[m];
+                if (m === newMode) {
+                    btn.className = "mode-btn flex-1 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-200 bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white";
+                } else {
+                    btn.className = "mode-btn flex-1 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+                }
+            });
+
+            // Update Progress Ring Color & Label
+            progressRing.className = `progress-ring-circle ${colors[newMode].stroke}`;
+            startBtn.className = `px-8 py-4 rounded-2xl ${colors[newMode].btn} text-white font-semibold text-lg flex items-center gap-3 transition-all duration-200 shadow-lg active:scale-95`;
+            
+            const bgGlow = document.getElementById('bg-glow-1');
+            bgGlow.className = `absolute -top-40 -left-40 w-96 h-96 ${colors[newMode].glow} rounded-full blur-3xl transition-all duration-700`;
+
+            const labels = { work: 'Focus Session', shortBreak: 'Short Break', longBreak: 'Long Break' };
+            timerLabel.textContent = labels[newMode];
+
+            updateStartBtnUI();
+            updateTimerDisplay();
+        }
+
+        // Timer Logic
+        function toggleTimer() {
+            if (state.status === 'running') {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            state.status = 'running';
+            updateStartBtnUI();
+
+            timerInterval = setInterval(() => {
+                state.timeLeft--;
+                updateTimerDisplay();
+
+                if (state.timeLeft <= 0) {
+                    onTimerComplete();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            state.status = 'paused';
+            clearInterval(timerInterval);
+            updateStartBtnUI();
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            state.status = 'stopped';
+            state.timeLeft = state.durations[state.mode];
+            updateStartBtnUI();
+            updateTimerDisplay();
+        }
+
+        function skipSession() {
+            resetTimer();
+            if (state.mode === 'work') {
+                switchMode('shortBreak');
+            } else {
+                switchMode('work');
+            }
+        }
+
+        function onTimerComplete() {
+            clearInterval(timerInterval);
+            playChime();
+
+            if (state.mode === 'work') {
+                const focusMins = Math.round(state.durations.work / 60);
+                state.stats.completedPomos++;
+                state.stats.focusMinutes += focusMins;
+
+                // Active task pomodoro counter increment
+                if (state.activeTaskId) {
+                    const task = state.tasks.find(t => t.id === state.activeTaskId);
+                    if (task) task.completedPomos++;
+                }
+
+                switchMode('shortBreak');
+            } else {
+                switchMode('work');
+            }
+
+            updateStatsUI();
+            renderTasks();
+            saveLocalStorage();
+        }
+
+        // UI Helpers
+        function updateStartBtnUI() {
+            if (state.status === 'running') {
+                startIcon.setAttribute('data-lucide', 'pause');
+                startText.textContent = '一時停止';
+            } else {
+                startIcon.setAttribute('data-lucide', 'play');
+                startText.textContent = state.status === 'paused' ? '再開' : 'スタート';
+            }
+            lucide.createIcons();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(state.timeLeft / 60);
+            const seconds = state.timeLeft % 60;
+            const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            timerDisplay.textContent = formatted;
+            document.title = `${formatted} - FocusCraft`;
+
+            // Update Circle Progress
+            const total = state.durations[state.mode];
+            const progress = (total - state.timeLeft) / total;
+            const offset = CIRCUMFERENCE - (progress * CIRCUMFERENCE);
+            progressRing.style.strokeDashoffset = offset;
+        }
+
+        // Task Management Logic
+        function addTask(title, estPomos) {
+            if (!title) return;
+            const newTask = {
+                id: Date.now(),
+                title,
+                estPomos,
+                completedPomos: 0,
+                completed: false
+            };
+            state.tasks.push(newTask);
+            if (!state.activeTaskId) state.activeTaskId = newTask.id;
+            
+            renderTasks();
+            saveLocalStorage();
+        }
+
+        function toggleTaskComplete(id) {
+            const task = state.tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                if (task.completed) state.stats.completedTasks++;
+                else state.stats.completedTasks = Math.max(0, state.stats.completedTasks - 1);
+            }
+            updateStatsUI();
+            renderTasks();
+            saveLocalStorage();
+        }
+
+        function deleteTask(id) {
+            state.tasks = state.tasks.filter(t => t.id !== id);
+            if (state.activeTaskId === id) {
+                state.activeTaskId = state.tasks.length > 0 ? state.tasks[0].id : null;
+            }
+            renderTasks();
+            saveLocalStorage();
+        }
+
+        function setActiveTask(id) {
+            state.activeTaskId = id;
+            renderTasks();
+        }
+
+        function renderTasks() {
+            taskList.innerHTML = '';
+            
+            const completedCount = state.tasks.filter(t => t.completed).length;
+            document.getElementById('task-counter').textContent = `${completedCount}/${state.tasks.length} 完了`;
+
+            if (state.tasks.length === 0) {
+                taskList.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-slate-400 py-8">
+                        <i data-lucide="inbox" class="w-10 h-10 mb-2 opacity-50"></i>
+                        <p class="text-xs">タスクがありません</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            state.tasks.forEach(task => {
+                const isActive = task.id === state.activeTaskId;
+                const el = document.createElement('div');
+                el.className = `flex items-center justify-between p-3 rounded-2xl border transition-all ${
+                    isActive 
+                        ? 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/50 shadow-sm' 
+                        : 'bg-white/40 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-800/60 hover:border-slate-300'
+                }`;
+
+                el.innerHTML = `
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                        <button onclick="toggleTaskComplete(${task.id})" class="text-slate-400 hover:text-rose-500 transition-colors">
+                            <i data-lucide="${task.completed ? 'check-circle-2' : 'circle'}" class="w-5 h-5 ${task.completed ? 'text-rose-500 fill-rose-100 dark:fill-rose-950' : ''}"></i>
+                        </button>
+                        <span onclick="setActiveTask(${task.id})" class="text-sm cursor-pointer truncate ${task.completed ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200 font-medium'}">
+                            ${escapeHtml(task.title)}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-slate-400 font-mono">
+                            <i data-lucide="flame" class="w-3.5 h-3.5 inline mr-0.5 text-rose-500"></i>${task.completedPomos}/${task.estPomos}
+                        </span>
+                        <button onclick="deleteTask(${task.id})" class="text-slate-300 hover:text-rose-500 transition-colors">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+                taskList.appendChild(el);
+            });
+
+            lucide.createIcons();
+        }
+
+        function updateStatsUI() {
+            document.getElementById('stat-focus-time').childNodes[0].textContent = state.stats.focusMinutes + ' ';
+            document.getElementById('stat-completed-pomo').textContent = state.stats.completedPomos;
+            document.getElementById('stat-completed-tasks').textContent = state.stats.completedTasks;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Persistence
+        function saveLocalStorage() {
+            localStorage.setItem('focuscraft_data', JSON.stringify({
+                durations: state.durations,
+                stats: state.stats,
+                tasks: state.tasks
+            }));
+        }
+
+        function loadLocalStorage() {
+            const data = localStorage.getItem('focuscraft_data');
+            if (data) {
+                try {
+                    const parsed = JSON.parse(data);
+                    if (parsed.durations) state.durations = parsed.durations;
+                    if (parsed.stats) state.stats = parsed.stats;
+                    if (parsed.tasks) state.tasks = parsed.tasks;
+                    state.timeLeft = state.durations.work;
+                } catch (e) {
+                    console.error('Failed to load local storage', e);
+                }
+            }
+        }
+
+        // Start App
+        window.onload = init;
+    </script>
 </body>
 </html>
