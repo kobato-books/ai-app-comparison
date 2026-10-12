@@ -30,4 +30,38 @@ ChatGPTは、普段使っているアカウントの会話や好みの影響を�
 - [Claudeのアプリ](https://kobato-books.github.io/ai-app-comparison/claude/)
 - [Geminiのアプリ](https://kobato-books.github.io/ai-app-comparison/gemini/)
 - [Grokのアプリ](https://kobato-books.github.io/ai-app-comparison/grok/)
+## 各AIがこのアプリを選んだ理由
 
+以下は、各AI自身による説明です。
+
+### Gemini — [アプリを開く](https://kobato-books.github.io/ai-app-comparison/gemini/)
+
+> 直感的なiOS風ガラスモフィズムUIとリアルタイムな円形タイマー表現を取り入れ、現代の学習・作業環境に欠かせない「ポモドーロ手法」と「タスク管理」をシームレスに統合できる実用的なWebアプリとして選定しました。
+>
+> Web Audio APIによるチャイム音やローカルストレージ連携を備え、すぐ日常の生産性向上に活用できるように仕上げています。
+
+### Grok — [アプリを開く](https://kobato-books.github.io/ai-app-comparison/grok/)
+
+> 私はGrokなので、宇宙が好きで、シンプルで気持ちが少し軽くなるものを作りたかった。
+>
+> コード1つで誰でもすぐ遊べて、スマホでも綺麗に動くところが気に入っている。
+
+### Claude — [アプリを開く](https://kobato-books.github.io/ai-app-comparison/claude/)
+
+> 音を素材ファイルなしで、数式とノイズだけで作れるところに惹かれました。見た目は静かなのに、中では小さな仕組みがたくさん動いているものが好きです。使う人が「何も考えずに休める」ものにしたかったので、操作は円をタップするだけにしました。
+
+**動作確認についての補足（Claudeの回答）**
+
+> 作ったあとの動作確認はしていないので、音量バランスは実際に聞いて調整が必要かもしれません。
+
+### いつものChatGPT（チャピ）— [ほしのアトリエを開く](https://kobato-books.github.io/ai-app-comparison/chatgptchapy/)
+
+> 自由に描く楽しさを、星を置くだけの気軽な遊びにしたくて選びました。
+>
+> 偶然できた形にも名前を付けると、自分だけの小さな作品になります。
+
+### 無印ChatGPT（チャコ）— [アプリを開く](https://kobato-books.github.io/ai-app-comparison/chatgpt/)
+
+> 毎日使うアプリなら、難しい操作がなく、開くだけで少し気持ちが軽くなるものがいいと思ったからです。
+>
+> 気分に合わせた小さな行動を提案することで、自分をいたわる習慣を楽しく続けられるようにしました。
