@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>しずかな音</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#e8edf2;--fg:#1c2a3a;--mut:#5d6b7b;--acc:#2f7a74;--line:#c3ccd6;--ring:#2f7a7455}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1626;--fg:#dde6f0;--mut:#8493a6;--acc:#7fc4bb;--line:#26324a;--ring:#7fc4bb55}}
+:root[data-theme="dark"]{--bg:#0f1626;--fg:#dde6f0;--mut:#8493a6;--acc:#7fc4bb;--line:#26324a;--ring:#7fc4bb55}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;display:flex;flex-direction:column;align-items:center;padding:28px 20px 40px}
+h1{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;font-weight:500;font-size:26px;letter-spacing:.18em;margin:8px 0 4px}
+.sub{color:var(--mut);font-size:13px;margin:0 0 28px}
+.orb{position:relative;width:min(64vw,260px);aspect-ratio:1;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;cursor:pointer;background:none;color:inherit;font:inherit;padding:0}
+.orb::before{content:"";position:absolute;inset:14%;border-radius:50%;background:var(--ring);transform:scale(.7);transition:transform 1s}
+.orb.on::before{animation:br 8s ease-in-out infinite}
+@keyframes br{0%,100%{transform:scale(.7)}50%{transform:scale(1.18)}}
+@media (prefers-reduced-motion:reduce){.orb.on::before{animation:none;transform:scale(1)}}
+.orb:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.t{position:relative;text-align:center}
+.t b{display:block;font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-weight:400;font-size:34px;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.t span{font-size:13px;color:var(--mut)}
+.times{display:flex;gap:8px;margin:26px 0 30px}
+.times button{background:none;border:1px solid var(--line);color:var(--mut);border-radius:999px;padding:7px 15px;font:inherit;font-size:13px;cursor:pointer}
+.times button[aria-pressed="true"]{border-color:var(--acc);color:var(--fg)}
+.mix{width:100%;max-width:340px;display:grid;gap:18px}
+label{display:grid;grid-template-columns:3.2em 1fr;align-items:center;gap:12px;font-size:14px}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.note{color:var(--mut);font-size:12px;margin-top:30px;text-align:center;line-height:1.7}
+</style>
+</head>
+<body>
+<h1>しずかな音</h1>
+<p class="sub">雨と風と火を混ぜて、ゆっくり呼吸する</p>
+
+<button class="orb" id="orb" aria-label="再生・停止">
+  <div class="t"><b id="clock">25:00</b><span id="msg">タップで始める</span></div>
+</button>
+
+<div class="times" role="group" aria-label="タイマー">
+  <button data-m="10" aria-pressed="false">10分</button>
+  <button data-m="25" aria-pressed="true">25分</button>
+  <button data-m="45" aria-pressed="false">45分</button>
+  <button data-m="0" aria-pressed="false">ずっと</button>
+</div>
+
+<div class="mix">
+  <label>雨<input type="range" id="rain" min="0" max="100" value="55"></label>
+  <label>風<input type="range" id="wind" min="0" max="100" value="25"></label>
+  <label>火<input type="range" id="fire" min="0" max="100" value="0"></label>
+</div>
+<p class="note">音はすべてブラウザ内で生成しています。<br>終了の8秒前から、ゆっくり静かになります。</p>
+
+<script>
+const $=s=>document.querySelector(s);
+let ctx,master,N={},running=false,mins=25,endAt=0,tick,cr,breath;
+const fmt=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(Math.floor(s%60)).padStart(2,"0");
+
+try{const s=JSON.parse(localStorage.getItem("shizuka")||"{}");
+ ["rain","wind","fire"].forEach(k=>{if(s[k]!=null)$("#"+k).value=s[k]});
+ if(s.m!=null)setM(s.m)}catch(e){}
+function save(){try{localStorage.setItem("shizuka",JSON.stringify({rain:$("#rain").value,wind:$("#wind").value,fire:$("#fire").value,m:mins}))}catch(e){}}
+
+function noise(type){const n=ctx.sampleRate*3,b=ctx.createBuffer(1,n,ctx.sampleRate),d=b.getChannelData(0);let l=0;
+ for(let i=0;i<n;i++){const w=Math.random()*2-1;if(type==="b"){l=(l+.02*w)/1.02;d[i]=l*3.5}else d[i]=w}return b}
+function src(b){const s=ctx.createBufferSource();s.buffer=b;s.loop=true;s.start();return s}
+function build(){
+ ctx=new(window.AudioContext||window.webkitAudioContext)();
+ master=ctx.createGain();master.gain.value=0;master.connect(ctx.destination);
+ const W=noise("w"),B=noise("b");
+ const rg=ctx.createGain(),hp=ctx.createBiquadFilter(),lp=ctx.createBiquadFilter();
+ hp.type="highpass";hp.frequency.value=900;lp.type="lowpass";lp.frequency.value=9000;
+ src(W).connect(hp);hp.connect(lp);lp.connect(rg);rg.connect(master);
+ const wg=ctx.createGain(),bp=ctx.createBiquadFilter(),lfo=ctx.createOscillator(),lg=ctx.createGain();
+ bp.type="bandpass";bp.frequency.value=500;bp.Q.value=.8;lfo.frequency.value=.13;lg.gain.value=300;
+ lfo.connect(lg);lg.connect(bp.frequency);lfo.start();
+ src(B).connect(bp);bp.connect(wg);wg.connect(master);
+ const fg=ctx.createGain(),fl=ctx.createBiquadFilter();fl.type="lowpass";fl.frequency.value=500;
+ src(B).connect(fl);fl.connect(fg);fg.connect(master);
+ N={rain:rg,wind:wg,fire:fg,W};
+}
+const K={rain:.5,wind:.9,fire:.8};
+function levels(){if(!ctx)return;for(const k in K){const v=$("#"+k).value/100;N[k].gain.setTargetAtTime(v*v*K[k],ctx.currentTime,.15)}}
+function crackle(){
+ if(!running)return;const v=$("#fire").value/100;
+ if(v>0&&Math.random()<v){const s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain(),t=ctx.currentTime;
+  s.buffer=N.W;f.type="bandpass";f.frequency.value=1500+Math.random()*3500;f.Q.value=2;
+  g.gain.setValueAtTime(.5*v,t);g.gain.exponentialRampToValueAtTime(.001,t+.03+Math.random()*.05);
+  s.connect(f);f.connect(g);g.connect(master);s.start(t,Math.random()*2,.12)}
+ cr=setTimeout(crackle,40+Math.random()*220);
+}
+function setM(m){mins=+m;document.querySelectorAll(".times button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m==m));
+ if(!running)$("#clock").textContent=mins?fmt(mins*60):"∞"}
+function start(){
+ if(!ctx)build();ctx.resume();running=true;levels();
+ master.gain.cancelScheduledValues(ctx.currentTime);master.gain.setTargetAtTime(1,ctx.currentTime,.8);
+ $("#orb").classList.add("on");crackle();
+ endAt=mins?Date.now()+mins*60000:0;
+ let ph=0;const say=()=>{$("#msg").textContent=ph++%2?"吐いて":"吸って"};say();breath=setInterval(say,4000);
+ tick=setInterval(()=>{
+  if(!endAt){$("#clock").textContent="∞";return}
+  const left=(endAt-Date.now())/1000;
+  if(left<=0){stop(true);return}
+  $("#clock").textContent=fmt(left);
+  if(left<8)master.gain.setTargetAtTime(left/8*.9,ctx.currentTime,.3);
+ },250);
+}
+function stop(done){
+ running=false;clearInterval(tick);clearInterval(breath);clearTimeout(cr);
+ $("#orb").classList.remove("on");
+ if(ctx){master.gain.cancelScheduledValues(ctx.currentTime);master.gain.setTargetAtTime(0,ctx.currentTime,.3);setTimeout(()=>{if(!running)ctx.suspend()},1500)}
+ $("#msg").textContent=done?"おつかれさま":"タップで始める";
+ $("#clock").textContent=mins?fmt(mins*60):"∞";
+}
+$("#orb").onclick=()=>running?stop():start();
+document.querySelectorAll(".times button").forEach(b=>b.onclick=()=>{setM(b.dataset.m);save();if(running){stop();start()}});
+["rain","wind","fire"].forEach(k=>$("#"+k).oninput=()=>{levels();save()});
+setM(mins);
+</script>
+</body>
+</html>
