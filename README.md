@@ -22,3 +22,11 @@ ChatGPTは、普段使っているアカウントの会話や好みの影響を�
 これは各AIの性能を厳密に順位付けするものではなく、今回の指示と利用条件で、どんな違いが生まれるかを観察する個人の実験です。
 
 制作過程や感想は、noteにも掲載予定です。
+
+## アプリを遊ぶ
+
+- [いつものChatGPTのアプリ](https://kobato-books.github.io/ai-app-comparison/chatgpt/)
+- [無印ChatGPT（チャコ）ほしのアトリエ（星座づくり）](https://kobato-books.github.io/ai-app-comparison/chatgptchapy/)
+- [Claudeのアプリ](https://kobato-books.github.io/ai-app-comparison/claude/)
+- [Grokのアプリ](https://kobato-books.github.io/ai-app-comparison/grok/)
+- [Geminiのアプリ](https://kobato-books.github.io/ai-app-comparison/gemini/)
