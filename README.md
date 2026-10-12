@@ -28,5 +28,6 @@ ChatGPTは、普段使っているアカウントの会話や好みの影響を�
 - [無印ChatGPTのアプリ（チャコ）](https://kobato-books.github.io/ai-app-comparison/chatgpt/)
 - [いつものChatGPT（チャピ）ほしのアトリエ（星座づくり）](https://kobato-books.github.io/ai-app-comparison/chatgptchapy/)
 - [Claudeのアプリ](https://kobato-books.github.io/ai-app-comparison/claude/)
-- [Grokのアプリ](https://kobato-books.github.io/ai-app-comparison/grok/)
 - [Geminiのアプリ](https://kobato-books.github.io/ai-app-comparison/gemini/)
+- [Grokのアプリ](https://kobato-books.github.io/ai-app-comparison/grok/)
+
