@@ -25,14 +25,34 @@ ChatGPTは、普段使っているアカウントの会話や好みの影響を�
 
 ## アプリを遊ぶ
 
-- [無印ChatGPTのアプリ（チャコ）](https://kobato-books.github.io/ai-app-comparison/chatgpt/)
-- [いつものChatGPT（チャピ）ほしのアトリエ（星座づくり）](https://kobato-books.github.io/ai-app-comparison/chatgptchapy/)
+### 無料版で作ったアプリ
+
+- [無印ChatGPT（チャコ）のアプリ](https://kobato-books.github.io/ai-app-comparison/chatgpt/)
 - [Claudeのアプリ](https://kobato-books.github.io/ai-app-comparison/claude/)
 - [Geminiのアプリ](https://kobato-books.github.io/ai-app-comparison/gemini/)
 - [Grokのアプリ](https://kobato-books.github.io/ai-app-comparison/grok/)
+
+### いつも使っているChatGPTで作ったアプリ
+
+- [いつものChatGPT（チャピ）のアプリ — ほしのアトリエ](https://kobato-books.github.io/ai-app-comparison/chatgptchapy/)
+
 ## 各AIがこのアプリを選んだ理由
 
-以下は、各AI自身による説明です。
+以下は、各AI自身による説明です。無料版の4つを先に、いつも使っているChatGPT（チャピ）を最後に掲載しています。掲載順は順位を示すものではありません。
+
+### 無印ChatGPT（チャコ）— [アプリを開く](https://kobato-books.github.io/ai-app-comparison/chatgpt/)
+
+> 毎日使うアプリなら、難しい操作がなく、開くだけで少し気持ちが軽くなるものがいいと思ったからです。
+>
+> 気分に合わせた小さな行動を提案することで、自分をいたわる習慣を楽しく続けられるようにしました。
+
+### Claude — [アプリを開く](https://kobato-books.github.io/ai-app-comparison/claude/)
+
+> 音を素材ファイルなしで、数式とノイズだけで作れるところに惹かれました。見た目は静かなのに、中では小さな仕組みがたくさん動いているものが好きです。使う人が「何も考えずに休める」ものにしたかったので、操作は円をタップするだけにしました。
+
+**動作確認についての補足（Claudeの回答）**
+
+> 作ったあとの動作確認はしていないので、音量バランスは実際に聞いて調整が必要かもしれません。
 
 ### Gemini — [アプリを開く](https://kobato-books.github.io/ai-app-comparison/gemini/)
 
@@ -46,22 +66,11 @@ ChatGPTは、普段使っているアカウントの会話や好みの影響を�
 >
 > コード1つで誰でもすぐ遊べて、スマホでも綺麗に動くところが気に入っている。
 
-### Claude — [アプリを開く](https://kobato-books.github.io/ai-app-comparison/claude/)
-
-> 音を素材ファイルなしで、数式とノイズだけで作れるところに惹かれました。見た目は静かなのに、中では小さな仕組みがたくさん動いているものが好きです。使う人が「何も考えずに休める」ものにしたかったので、操作は円をタップするだけにしました。
-
-**動作確認についての補足（Claudeの回答）**
-
-> 作ったあとの動作確認はしていないので、音量バランスは実際に聞いて調整が必要かもしれません。
-
-### いつものChatGPT（チャピ）— [ほしのアトリエを開く](https://kobato-books.github.io/ai-app-comparison/chatgptchapy/)
+### いつものChatGPT（チャピ）— [アプリを開く](https://kobato-books.github.io/ai-app-comparison/chatgptchapy/)
 
 > 自由に描く楽しさを、星を置くだけの気軽な遊びにしたくて選びました。
 >
 > 偶然できた形にも名前を付けると、自分だけの小さな作品になります。
-
-### 無印ChatGPT（チャコ）— [アプリを開く](https://kobato-books.github.io/ai-app-comparison/chatgpt/)
-
 > 毎日使うアプリなら、難しい操作がなく、開くだけで少し気持ちが軽くなるものがいいと思ったからです。
 >
 > 気分に合わせた小さな行動を提案することで、自分をいたわる習慣を楽しく続けられるようにしました。
